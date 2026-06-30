@@ -346,13 +346,17 @@ export class Table {
 
       let shouldHit = dealerScore < 17;
 
-      // Bad Dealer AI: 25% probability of making a mistake
-      const isClumsyMistake = Math.random() < 0.25;
-      if (isClumsyMistake && !bothBusted && !bothBJorBusted) {
-        if (dealerScore >= 17 && dealerScore <= 19) {
+      // İnsan gibi risk alan bot mantığı:
+      const playerScore = this.seat && this.seat.hand.status !== 'bust' ? this.seat.hand.score : 0;
+      const isLosing = playerScore > dealerScore && playerScore <= 21;
+
+      if (dealerScore === 16 && Math.random() < 0.15 && !isLosing) {
+        // %15 ihtimalle 16'da patlamaktan korkup durma riski alır (Eğer geride değilse)
+        shouldHit = false;
+      } else if ((dealerScore === 17 || dealerScore === 18) && isLosing) {
+        // Eğer geride olduğunu görürse, %30 ihtimalle 17 veya 18'de riske girip kart çeker
+        if (Math.random() < 0.30) {
           shouldHit = true;
-        } else if (dealerScore >= 14 && dealerScore < 17) {
-          shouldHit = false;
         }
       }
 

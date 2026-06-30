@@ -117,6 +117,36 @@ class CasinoAudio {
 
 const audio = new CasinoAudio();
 
+const renderCasinoChip = (amount: number, sizeClass = "w-10 h-10") => {
+  // Determine color based on amount
+  let color = '#dc2626'; // Default red (10)
+  let stripesColor = '#ffffff';
+  if (amount >= 500) color = '#7c3aed'; // Purple
+  else if (amount >= 100) color = '#18181b'; // Black
+  else if (amount >= 50) color = '#2563eb'; // Blue
+  else if (amount >= 25) color = '#059669'; // Green
+
+  return (
+    <div 
+      className={`relative ${sizeClass} rounded-full flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5),inset_0_1.5px_3px_rgba(255,255,255,0.4),inset_0_-1.5px_3px_rgba(0,0,0,0.4)] border-4 border-dashed border-white select-none shrink-0`}
+      style={{
+        backgroundColor: color,
+        borderColor: stripesColor,
+      }}
+    >
+      {/* Inner Ring Layer */}
+      <div className="absolute inset-[3px] rounded-full border border-dashed border-white/20 bg-black/15 flex items-center justify-center">
+        {/* Denomination Center */}
+        <div className="w-[75%] h-[75%] rounded-full bg-white/95 shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.4)] flex items-center justify-center">
+          <span className="text-slate-900 font-black text-[9px] tracking-tight">{amount}</span>
+        </div>
+      </div>
+      {/* Glossy Overlay Reflection */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/5 to-white/15 pointer-events-none"></div>
+    </div>
+  );
+};
+
 export const GameTable: React.FC<GameTableProps> = ({
   socket,
   onBackToLobby,
@@ -340,104 +370,145 @@ export const GameTable: React.FC<GameTableProps> = ({
         </div>
       )}
 
-      {/* Blackjack Felt Table */}
-      <div className="flex-1 flex flex-col justify-between bg-gradient-to-b from-[#14532d] to-[#064e3b] border-[12px] md:border-[18px] border-[#3f200d] rounded-t-full shadow-2xl p-6 md:p-8 w-full max-w-4xl mx-auto relative border-b-0 min-h-[380px]">
+      {/* Turn notification banner */}
+      {table.gameState === 'PLAYING' && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-indigo-950/95 border-2 border-indigo-500 text-indigo-200 px-8 py-3 rounded-2xl shadow-[0_10px_35px_rgba(99,102,241,0.45)] text-xs md:text-sm font-extrabold animate-bounce flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping"></div>
+          <span>
+            Karar Verme Sırası Sizde! {seat?.splitHand ? `(Aktif El: ${table.activeHandType === 'main' ? 'Birinci El' : 'İkinci El'})` : ''}
+          </span>
+        </div>
+      )}
+
+      {/* Outer Table Rim (Black Leather Bumper) */}
+      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-zinc-900 select-none">
         
-        {/* Rules printed on felt */}
-        <div className="absolute top-28 left-1/2 transform -translate-x-1/2 text-center text-emerald-400/15 pointer-events-none w-full max-w-[85%] font-serif">
-          <p className="text-lg md:text-2xl font-bold tracking-widest leading-relaxed">BLACKJACK PAYS 3 TO 2</p>
-          <p className="text-xs md:text-sm mt-1.5 uppercase font-medium">Dealer must stand on 17 and draw to 16</p>
-        </div>
-
-        {/* Dealer Section */}
-        <div className="flex flex-col items-center mt-2 z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400/80">Krupiye Bot</span>
-            {table.dealerHand.cards.length > 0 && (
-              <span className="bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 px-2.5 py-0.5 rounded text-xs font-bold">
-                Skor: {table.dealerHand.score}
-              </span>
-            )}
+        {/* Inner Wood Panel Frame */}
+        <div className="flex-1 flex flex-col justify-between rounded-t-full bg-gradient-to-b from-[#5c2317] via-[#3b1209] to-[#2d0e07] p-[10px] md:p-[16px] shadow-[inset_0_4px_10px_rgba(0,0,0,0.95),0_6px_12px_rgba(0,0,0,0.7)] border border-[#78350f]/20 relative">
+          
+          {/* Metal Cup Holders - Left */}
+          <div className="absolute left-[1.5%] top-[55%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
+            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
+          </div>
+          <div className="absolute left-[4.5%] top-[25%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
+            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
+          </div>
+          
+          {/* Metal Cup Holders - Right */}
+          <div className="absolute right-[1.5%] top-[55%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
+            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
+          </div>
+          <div className="absolute right-[4.5%] top-[25%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
+            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
           </div>
 
-          <div className="flex gap-2 justify-center min-h-[96px] md:min-h-[112px]">
-            {table.dealerHand.cards.length === 0 ? (
-              <div className="w-16 h-24 md:w-20 md:h-28 border border-dashed border-emerald-400/20 rounded-lg flex items-center justify-center text-emerald-400/10">
-                Boş
-              </div>
-            ) : (
-              table.dealerHand.cards.map((card: any, idx: number) => (
-                <Card key={`dealer-card-${idx}`} card={card} />
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Game Phase Notification HUD */}
-        <div className="text-center my-4 z-10">
-          {table.gameState === 'BETTING' && (
-            <div className="inline-block bg-slate-950/90 border border-amber-500/20 px-6 py-2 rounded-full text-amber-400 text-xs md:text-sm font-bold shadow-lg">
-              Bahsinizi Belirleyin ve Oyunu Başlatın
-            </div>
-          )}
-          {table.gameState === 'DEALING' && (
-            <div className="inline-block bg-slate-950/95 border border-indigo-500/20 px-6 py-2 rounded-full text-indigo-300 text-xs md:text-sm font-bold shadow-lg animate-pulse">
-              Kartlar Dağıtılıyor...
-            </div>
-          )}
-          {table.gameState === 'PLAYING' && (
-            <div className="inline-block bg-slate-950/90 border border-emerald-500/20 px-6 py-2 rounded-full text-emerald-400 text-xs md:text-sm font-bold shadow-lg">
-              Karar Verme Sırası Sizde! {seat?.splitHand ? `(Aktif El: ${table.activeHandType === 'main' ? 'Birinci El' : 'İkinci El'})` : ''}
-            </div>
-          )}
-          {table.gameState === 'DEALER_TURN' && (
-            <div className="inline-block bg-slate-950/90 border border-red-500/20 px-6 py-2 rounded-full text-red-400 text-xs md:text-sm font-bold shadow-lg">
-              Krupiye Bot Oynuyor...
-            </div>
-          )}
-          {table.gameState === 'SETTLED' && (
-            <div className="inline-block bg-slate-950/90 border border-emerald-500/20 px-6 py-2 rounded-full text-slate-200 text-xs md:text-sm font-bold shadow-lg">
-              El Sonuçlandı! Yeni Bahisler Başlıyor.
-            </div>
-          )}
-        </div>
-
-        {/* Single Player Hand Layout (Supports Split side-by-side) */}
-        <div className="flex flex-col items-center justify-end z-10 mb-2 w-full">
-          {seat ? (
-            <div className="flex flex-col items-center w-full relative">
+          {/* Green Felt Inner Area */}
+          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16803d_0%,_#14532d_60%,_#064e3b_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-6 md:p-8 relative overflow-hidden border-b-0 min-h-[420px] md:min-h-[500px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
+            
+            {/* Classic Casino Markings Container */}
+            <div className="absolute inset-0 pointer-events-none select-none z-5 overflow-hidden rounded-t-full">
               
-              {/* Cards Container */}
-              <div className="flex flex-wrap md:flex-nowrap gap-6 md:gap-12 justify-center items-end w-full mb-3">
-                
-                {/* Main Hand */}
-                <div className={`flex flex-col items-center p-3.5 rounded-2xl transition-all duration-300 relative border-2 ${
-                  seat.splitHand 
-                    ? (table.activeHandType === 'main' && table.gameState === 'PLAYING'
-                       ? 'bg-slate-900/80 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
-                       : 'bg-slate-950/40 border-slate-800 scale-95 opacity-80') 
-                    : 'border-transparent bg-transparent'
-                }`}>
-                  <div className="flex -space-x-8 md:-space-x-12 justify-center mb-2 px-2 min-h-[96px] md:min-h-[112px]">
+              {/* Giant BLACKJACK Logo */}
+              <div className="absolute top-[52%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">
+                <h1 className="text-6xl md:text-8xl font-serif font-black tracking-[0.25em] text-amber-500/10 mix-blend-overlay">
+                  BLACKJACK
+                </h1>
+              </div>
+
+              {/* Insurance Curved Line SVG (Removed) */}
+              {/* Dealer Rules Text (Removed) */}
+
+              {/* Decorative Betting Circles (5 spots) */}
+              <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] md:w-full flex justify-center gap-6 md:gap-20">
+                {[...Array(5)].map((_, i) => (
+                  <div key={`bet-circle-${i}`} className={`w-14 h-14 md:w-20 md:h-20 rounded-full border-[2px] border-amber-500/20 p-[2px] md:p-1 ${i === 2 ? 'border-amber-400/40 bg-black/10 shadow-[inset_0_0_15px_rgba(251,191,36,0.1)]' : ''}`}>
+                    <div className="w-full h-full rounded-full border border-amber-500/30 flex items-center justify-center">
+                      <div className="w-[85%] h-[85%] rounded-full border-[0.5px] border-white/10" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+
+            {/* Dealer Section */}
+            <div className="flex flex-col items-center mt-2 z-10 relative">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-400/80 drop-shadow-md">Krupiye Bot</span>
+                {table.dealerHand.cards.length > 0 && (
+                  <span className="bg-emerald-950/90 border border-emerald-500/30 text-emerald-400 px-2 md:px-2.5 py-0.5 rounded text-[10px] md:text-xs font-bold shadow-lg">
+                    Skor: {table.dealerHand.score}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex gap-2 justify-center min-h-[96px] md:min-h-[112px]">
+                {table.dealerHand.cards.length === 0 ? (
+                  <div className="w-16 h-24 md:w-20 md:h-28 border-[1.5px] border-dashed border-emerald-400/30 rounded-lg flex items-center justify-center text-emerald-400/20 font-bold bg-black/10">
+                    Boş
+                  </div>
+                ) : (
+                  table.dealerHand.cards.map((card: any, idx: number) => (
+                    <Card key={`dealer-card-${idx}`} card={card} />
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Game Phase Notification HUD */}
+            <div className="absolute top-[35%] left-1/2 -translate-x-1/2 z-10 w-full text-center pointer-events-none select-none">
+              {table.gameState === 'BETTING' && (
+                <div className="inline-block bg-slate-950/90 border border-amber-500/20 px-6 py-2 rounded-full text-amber-400 text-xs md:text-sm font-bold shadow-lg">
+                  Bahsinizi Belirleyin ve Oyunu Başlatın
+                </div>
+              )}
+              {table.gameState === 'DEALING' && (
+                <div className="inline-block bg-slate-950/95 border border-indigo-500/20 px-6 py-2 rounded-full text-indigo-300 text-xs md:text-sm font-bold shadow-lg animate-pulse">
+                  Kartlar Dağıtılıyor...
+                </div>
+              )}
+              {table.gameState === 'DEALER_TURN' && (
+                <div className="inline-block bg-slate-950/90 border border-red-500/20 px-6 py-2 rounded-full text-red-400 text-xs md:text-sm font-bold shadow-lg">
+                  Krupiye Bot Oynuyor...
+                </div>
+              )}
+              {table.gameState === 'SETTLED' && (
+                <div className="inline-block bg-slate-950/90 border border-emerald-500/20 px-6 py-2 rounded-full text-slate-200 text-xs md:text-sm font-bold shadow-lg">
+                  El Sonuçlandı! Yeni Bahisler Başlıyor.
+                </div>
+              )}
+            </div>
+
+            {/* Absolute-Positioned Player Hands & Profile Details */}
+            {seat ? (
+              <>
+                {/* Main Hand (Positioned exactly over Box 3 when not split, or Box 2 when split) */}
+                <div 
+                  className={`absolute transition-all duration-300 flex flex-col items-center p-1 rounded-2xl z-20 ${
+                    seat.splitHand 
+                      ? 'left-[36%] top-[61%] -translate-x-1/2 -translate-y-1/2 -rotate-12'
+                      : 'left-[50%] top-[58%] -translate-x-1/2 -translate-y-1/2'
+                  } ${
+                    seat.splitHand 
+                      ? (table.activeHandType === 'main' && table.gameState === 'PLAYING'
+                         ? 'bg-slate-900/85 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
+                         : 'bg-slate-950/50 border-2 border-slate-800 scale-95 opacity-80') 
+                      : 'border-2 border-transparent bg-transparent'
+                  }`}
+                >
+                  <div className="flex -space-x-8 md:-space-x-10 justify-center mb-1 px-1 min-h-[96px] md:min-h-[112px]">
                     {seat.hand.cards.map((card: CardType, cardIdx: number) => (
                       <Card key={`player-main-card-${cardIdx}`} card={card} />
                     ))}
                   </div>
 
-                  {/* Bet stack for main hand */}
-                  {seat.placedBet && seat.hand.bet > 0 && (
-                    <div className="absolute -top-6 left-4 bg-amber-500 text-slate-950 font-extrabold w-8 h-8 rounded-full border border-dashed border-white shadow-lg flex items-center justify-center text-[10px] chip-active">
-                      {seat.hand.bet}
-                    </div>
-                  )}
-
                   {/* Score details */}
                   {seat.placedBet && seat.hand.cards.length > 0 && (
-                    <div className="flex items-center gap-1.5 bg-slate-950/90 border border-slate-800 rounded-lg px-2.5 py-0.5 mt-1">
-                      <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">
+                    <div className="flex items-center gap-1 bg-slate-950/90 border border-slate-800 rounded px-1.5 py-0.5 mt-1 shadow-lg">
+                      <span className="text-[8px] text-slate-400 uppercase font-bold tracking-wider">
                         {seat.splitHand ? 'El 1' : 'Eliniz'}
                       </span>
-                      <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[10px] font-bold">
+                      <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[9px] font-bold">
                         {seat.hand.score}
                       </span>
                       {seat.hand.status === 'bust' && <span className="bg-red-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
@@ -447,31 +518,26 @@ export const GameTable: React.FC<GameTableProps> = ({
                   )}
                 </div>
 
-                {/* Split Hand */}
+                {/* Split Hand (Positioned exactly over Box 4) */}
                 {seat.splitHand && (
-                  <div className={`flex flex-col items-center p-3.5 rounded-2xl transition-all duration-300 relative border-2 ${
-                    table.activeHandType === 'split' && table.gameState === 'PLAYING'
-                      ? 'bg-slate-900/80 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
-                      : 'bg-slate-950/40 border-slate-800 scale-95 opacity-80'
-                  }`}>
-                    <div className="flex -space-x-8 md:-space-x-12 justify-center mb-2 px-2 min-h-[96px] md:min-h-[112px]">
+                  <div 
+                    className={`absolute transition-all duration-300 flex flex-col items-center p-1 rounded-2xl z-20 left-[64%] top-[61%] -translate-x-1/2 -translate-y-1/2 rotate-12 ${
+                      table.activeHandType === 'split' && table.gameState === 'PLAYING'
+                        ? 'bg-slate-900/85 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
+                        : 'bg-slate-950/50 border-2 border-slate-800 scale-95 opacity-80'
+                    }`}
+                  >
+                    <div className="flex -space-x-8 md:-space-x-10 justify-center mb-1 px-1 min-h-[96px] md:min-h-[112px]">
                       {seat.splitHand.cards.map((card: CardType, cardIdx: number) => (
                         <Card key={`player-split-card-${cardIdx}`} card={card} />
                       ))}
                     </div>
 
-                    {/* Bet stack for split hand */}
-                    {seat.splitHand.bet > 0 && (
-                      <div className="absolute -top-6 left-4 bg-amber-500 text-slate-950 font-extrabold w-8 h-8 rounded-full border border-dashed border-white shadow-lg flex items-center justify-center text-[10px] chip-active">
-                        {seat.splitHand.bet}
-                      </div>
-                    )}
-
                     {/* Score details */}
                     {seat.splitHand.cards.length > 0 && (
-                      <div className="flex items-center gap-1.5 bg-slate-950/90 border border-slate-800 rounded-lg px-2.5 py-0.5 mt-1">
-                        <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">El 2</span>
-                        <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[10px] font-bold">
+                      <div className="flex items-center gap-1 bg-slate-950/90 border border-slate-800 rounded px-1.5 py-0.5 mt-1 shadow-lg">
+                        <span className="text-[8px] text-slate-400 uppercase font-bold tracking-wider">El 2</span>
+                        <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[9px] font-bold">
                           {seat.splitHand.score}
                         </span>
                         {seat.splitHand.status === 'bust' && <span className="bg-red-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
@@ -482,30 +548,47 @@ export const GameTable: React.FC<GameTableProps> = ({
                   </div>
                 )}
 
-              </div>
+                {/* Player Profile Details Card (Stable Bottom Center, holding the chips on the left) */}
+                <div className="absolute left-1/2 bottom-3 -translate-x-1/2 z-30 bg-slate-950/95 border border-slate-800/80 rounded-2xl p-3 w-64 shadow-2xl flex items-center gap-3">
+                  {/* Bet stack as real casino chips to the left of the user's name */}
+                  {seat.placedBet && seat.hand.bet > 0 && (
+                    <div className="flex gap-1 items-center justify-center border-r border-slate-800/80 pr-3">
+                      {renderCasinoChip(seat.hand.bet, "w-10 h-10")}
+                      {seat.splitHand && seat.splitHand.bet > 0 && (
+                        <>
+                          <span className="text-[9px] font-black text-slate-600">+</span>
+                          {renderCasinoChip(seat.splitHand.bet, "w-10 h-10")}
+                        </>
+                      )}
+                    </div>
+                  )}
 
-              {/* Player profile details card */}
-              <div className="bg-slate-950/90 border border-slate-850 rounded-2xl p-2.5 w-52 text-center shadow-xl">
-                <p className="text-xs font-bold text-slate-100">{seat.username}</p>
-                <p className="text-[10px] text-emerald-400 font-semibold">{seat.chips.toLocaleString()} Çip</p>
-                
-                {/* Insurance Indicator Tag */}
-                {table.insuranceBet > 0 && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full text-[9px] font-bold">
-                    <ShieldAlert className="w-3 h-3" />
-                    <span>Sigorta: {table.insuranceBet} $</span>
+                  {/* Profile texts */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                      <p className="text-xs font-bold text-slate-100 truncate">{seat.username}</p>
+                    </div>
+                    <p className="text-[10px] text-emerald-400 font-semibold mt-0.5">{seat.chips.toLocaleString()} Çip</p>
+                    
+                    {/* Insurance Indicator Tag */}
+                    {table.insuranceBet > 0 && (
+                      <div className="mt-1 inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full text-[8px] font-bold">
+                        <ShieldAlert className="w-2.5 h-2.5" />
+                        <span>Sigorta: {table.insuranceBet} $</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+              </>
+            ) : (
+              <div className="text-slate-400 text-sm absolute left-1/2 bottom-10 -translate-x-1/2">
+                Oyuncu koltuğu yükleniyor...
               </div>
+            )}
 
-            </div>
-          ) : (
-            <div className="text-slate-400 text-sm">
-              Oyuncu koltuğu yükleniyor...
-            </div>
-          )}
+          </div>
         </div>
-
       </div>
 
       {/* Action Controls HUD */}
@@ -515,18 +598,18 @@ export const GameTable: React.FC<GameTableProps> = ({
         {seat && table.gameState === 'BETTING' && !seat.placedBet && (
           <div className="flex flex-col items-center gap-3">
             <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">Bahsinizi Seçin</span>
-            <div className="flex flex-wrap gap-2 md:gap-4 justify-center">
+            <div className="flex flex-wrap gap-3 md:gap-5 justify-center items-center py-1">
               {[10, 25, 50, 100, 500].map((val) => (
                 <button
                   key={`chip-select-${val}`}
                   onClick={() => setBetSelection(val)}
-                  className={`w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-dashed font-extrabold flex items-center justify-center transition cursor-pointer text-xs md:text-sm select-none shadow-lg ${
+                  className={`transition cursor-pointer rounded-full p-0.5 select-none ${
                     betSelection === val 
-                      ? 'bg-amber-500 text-slate-950 border-slate-100 scale-110 shadow-amber-500/25' 
-                      : 'bg-slate-900/90 text-slate-300 border-slate-700 hover:border-slate-500'
+                      ? 'ring-4 ring-amber-400 scale-115 shadow-xl shadow-amber-500/20' 
+                      : 'opacity-85 hover:opacity-100 hover:scale-105'
                   }`}
                 >
-                  {val}
+                  {renderCasinoChip(val, "w-12 h-12 md:w-14 md:h-14")}
                 </button>
               ))}
             </div>
