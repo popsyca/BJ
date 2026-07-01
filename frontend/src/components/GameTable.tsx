@@ -395,7 +395,7 @@ export const GameTable: React.FC<GameTableProps> = ({
       )}
 
       {/* Outer Table Rim (Black Leather Bumper) */}
-      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[300px] md:min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-burgundy/25 select-none">
+      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[220px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-burgundy/25 select-none">
         
         {/* Inner Wood Panel Frame */}
         <div className="flex-1 flex flex-col justify-between rounded-t-full bg-gradient-to-b from-[#390517] via-[#24030e] to-[#160209] p-[10px] md:p-[16px] shadow-[inset_0_4px_10px_rgba(0,0,0,0.95),0_6px_12px_rgba(0,0,0,0.7)] border border-gold/15 relative">
@@ -403,7 +403,7 @@ export const GameTable: React.FC<GameTableProps> = ({
 
 
           {/* Green Felt Inner Area */}
-          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16302B_0%,_#0c1a17_70%,_#03110D_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-4 md:p-8 relative overflow-hidden border-b-0 min-h-[320px] md:min-h-[420px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
+          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16302B_0%,_#0c1a17_70%,_#03110D_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-4 md:p-8 relative overflow-hidden border-b-0 min-h-[200px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
             
             {/* Classic Casino Markings Container */}
             <div className="absolute inset-0 pointer-events-none select-none z-5 overflow-hidden rounded-t-full">
