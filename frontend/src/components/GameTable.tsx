@@ -314,7 +314,7 @@ export const GameTable: React.FC<GameTableProps> = ({
   const activeHand = isMyTurn && table.activeHandType === 'split' ? seat?.splitHand : seat?.hand;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-spruce text-platinum select-none p-4 relative">
+    <div className="flex flex-col h-screen overflow-y-auto bg-spruce text-platinum select-none p-3 md:p-4 relative">
       
       {/* Insurance Overlay Prompt Modal */}
       {table.gameState === 'INSURANCE_DECISION' && seat && (
@@ -352,7 +352,7 @@ export const GameTable: React.FC<GameTableProps> = ({
       )}
 
       {/* Top bar controls */}
-      <div className="grid grid-cols-3 items-center z-10 w-full max-w-5xl mx-auto mb-4">
+      <div className="grid grid-cols-3 items-center z-10 w-full max-w-5xl mx-auto mb-2 md:mb-4">
         <div className="flex justify-start">
           <button
             onClick={onBackToLobby}
@@ -395,7 +395,7 @@ export const GameTable: React.FC<GameTableProps> = ({
       )}
 
       {/* Outer Table Rim (Black Leather Bumper) */}
-      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-burgundy/25 select-none">
+      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[300px] md:min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-burgundy/25 select-none">
         
         {/* Inner Wood Panel Frame */}
         <div className="flex-1 flex flex-col justify-between rounded-t-full bg-gradient-to-b from-[#390517] via-[#24030e] to-[#160209] p-[10px] md:p-[16px] shadow-[inset_0_4px_10px_rgba(0,0,0,0.95),0_6px_12px_rgba(0,0,0,0.7)] border border-gold/15 relative">
@@ -403,7 +403,7 @@ export const GameTable: React.FC<GameTableProps> = ({
 
 
           {/* Green Felt Inner Area */}
-          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16302B_0%,_#0c1a17_70%,_#03110D_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-6 md:p-8 relative overflow-hidden border-b-0 min-h-[420px] md:min-h-[500px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
+          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16302B_0%,_#0c1a17_70%,_#03110D_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-4 md:p-8 relative overflow-hidden border-b-0 min-h-[320px] md:min-h-[420px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
             
             {/* Classic Casino Markings Container */}
             <div className="absolute inset-0 pointer-events-none select-none z-5 overflow-hidden rounded-t-full">
@@ -592,11 +592,11 @@ export const GameTable: React.FC<GameTableProps> = ({
       </div>
 
       {/* Action Controls HUD */}
-      <div className="z-10 bg-forest/60 backdrop-blur-md border border-gold/25 rounded-2xl p-4 w-full max-w-4xl mx-auto mt-4 shadow-2xl">
+      <div className="z-10 bg-forest/60 backdrop-blur-md border border-gold/25 rounded-2xl p-3 md:p-4 w-full max-w-4xl mx-auto mt-2 md:mt-4 shadow-2xl">
         
         {/* Betting options */}
         {seat && table.gameState === 'BETTING' && !seat.placedBet && (
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2 md:gap-3">
             {/* Large Current Balance Display */}
             <div className="flex flex-col items-center mb-1 animate-fade-in">
               <span className="text-[10px] uppercase tracking-[0.2em] text-gold/60 font-bold">Mevcut Bakiyeniz</span>
@@ -606,7 +606,7 @@ export const GameTable: React.FC<GameTableProps> = ({
             </div>
 
             <span className="text-xs font-bold tracking-wider text-gold uppercase mt-1">Bahsinizi Seçin</span>
-            <div className="flex flex-wrap gap-3 md:gap-5 justify-center items-center py-1">
+            <div className="flex flex-wrap gap-2 md:gap-5 justify-center items-center py-1">
               {[10, 25, 50, 100, 500].map((val) => (
                 <button
                   key={`chip-select-${val}`}
@@ -617,7 +617,7 @@ export const GameTable: React.FC<GameTableProps> = ({
                       : 'opacity-85 hover:opacity-100 hover:scale-105'
                   }`}
                 >
-                  {renderCasinoChip(val, "w-12 h-12 md:w-14 md:h-14")}
+                  {renderCasinoChip(val, "w-10 h-10 md:w-14 md:h-14")}
                 </button>
               ))}
             </div>
