@@ -352,25 +352,29 @@ export const GameTable: React.FC<GameTableProps> = ({
       )}
 
       {/* Top bar controls */}
-      <div className="flex justify-between items-center z-10 w-full max-w-5xl mx-auto mb-4">
-        <button
-          onClick={onBackToLobby}
-          className="flex items-center gap-2 bg-forest/60 border border-gold/20 hover:bg-forest text-gold font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer text-sm"
-        >
-          <ArrowLeft className="w-4 h-4 text-gold" /> Lobiye Dön
-        </button>
+      <div className="grid grid-cols-3 items-center z-10 w-full max-w-5xl mx-auto mb-4">
+        <div className="flex justify-start">
+          <button
+            onClick={onBackToLobby}
+            className="flex items-center gap-2 bg-forest/60 border border-gold/20 hover:bg-forest text-gold font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer text-sm"
+          >
+            <ArrowLeft className="w-4 h-4 text-gold" /> Lobiye Dön
+          </button>
+        </div>
 
         <div className="text-center">
           <h2 className="font-extrabold text-sm md:text-lg text-gold tracking-wider">TEK KİŞİLİK CASINO</h2>
           <p className="text-xs text-gold/60 font-medium">Krupiye Limit: {table.minBet} - {table.maxBet} $</p>
         </div>
 
-        <button
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className="p-2.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold rounded-xl transition cursor-pointer"
-        >
-          {soundEnabled ? <Volume2 className="w-4 h-4 text-gold" /> : <VolumeX className="w-4 h-4" />}
-        </button>
+        <div className="flex justify-end">
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="p-2.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold rounded-xl transition cursor-pointer"
+          >
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-gold" /> : <VolumeX className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       {/* Error notification banner */}
@@ -593,7 +597,15 @@ export const GameTable: React.FC<GameTableProps> = ({
         {/* Betting options */}
         {seat && table.gameState === 'BETTING' && !seat.placedBet && (
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold tracking-wider text-gold uppercase">Bahsinizi Seçin</span>
+            {/* Large Current Balance Display */}
+            <div className="flex flex-col items-center mb-1 animate-fade-in">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-gold/60 font-bold">Mevcut Bakiyeniz</span>
+              <span className="text-3xl font-black text-gold tracking-wide mt-1">
+                {seat.chips.toLocaleString()} ÇİP
+              </span>
+            </div>
+
+            <span className="text-xs font-bold tracking-wider text-gold uppercase mt-1">Bahsinizi Seçin</span>
             <div className="flex flex-wrap gap-3 md:gap-5 justify-center items-center py-1">
               {[10, 25, 50, 100, 500].map((val) => (
                 <button
