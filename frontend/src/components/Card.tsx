@@ -191,7 +191,7 @@ export const Card: React.FC<CardProps> = ({ card }) => {
 
           {/* Top Left Index */}
           <div className="absolute top-[4px] left-[6px] md:top-[6px] md:left-[8px] flex flex-col items-center leading-none z-10">
-            <span className="font-serif font-bold text-[10px] md:text-sm">{card.value}</span>
+            <span className="font-bold text-[10px] md:text-sm">{card.value}</span>
             <span className={`${getSuitColor(card.suit)} text-[7px] md:text-[9px] -mt-[1px]`}>{getSuitSymbol(card.suit)}</span>
           </div>
 
@@ -222,21 +222,21 @@ export const Card: React.FC<CardProps> = ({ card }) => {
 
           {/* Bottom Right Index */}
           <div className="absolute bottom-[4px] right-[6px] md:bottom-[6px] md:right-[8px] flex flex-col items-center leading-none transform rotate-180 z-10">
-            <span className="font-serif font-bold text-[10px] md:text-sm">{card.value}</span>
+            <span className="font-bold text-[10px] md:text-sm">{card.value}</span>
             <span className={`${getSuitColor(card.suit)} text-[7px] md:text-[9px] -mt-[1px]`}>{getSuitSymbol(card.suit)}</span>
           </div>
         </div>
 
-        {/* Card Back (Vintage Classic Blue Pattern matching front border color style) */}
-        <div className="card-back bg-[#f2e5d3] flex items-center justify-center absolute w-full h-full backface-hidden rounded shadow-inner overflow-hidden border border-[#d6c5b0]">
-           <div className="w-[90%] h-[92%] border-[0.5px] border-[#1c1c1c] rounded-[2px] bg-[#294266] overflow-hidden relative">
-              <svg className="w-full h-full opacity-60" viewBox="0 0 100 140" fill="none">
+        {/* Card Back (Vintage Premium Burgundy & Gold Pattern) */}
+        <div className="card-back bg-[#f2e5d3] flex items-center justify-center absolute w-full h-full backface-hidden rounded shadow-inner overflow-hidden border border-[#A38560]/40">
+           <div className="w-[90%] h-[92%] border-[0.5px] border-[#A38560] rounded-[2px] bg-[#390517] overflow-hidden relative">
+              <svg className="w-full h-full opacity-70" viewBox="0 0 100 140" fill="none">
                 <defs>
                   <pattern id="vintage-pattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                    <circle cx="5" cy="5" r="3" fill="none" stroke="#f2e5d3" strokeWidth="0.5" />
-                    <circle cx="5" cy="5" r="1" fill="#f2e5d3" />
-                    <line x1="0" y1="0" x2="10" y2="10" stroke="#f2e5d3" strokeWidth="0.2" />
-                    <line x1="10" y1="0" x2="0" y2="10" stroke="#f2e5d3" strokeWidth="0.2" />
+                    <circle cx="5" cy="5" r="3" fill="none" stroke="#A38560" strokeWidth="0.5" />
+                    <circle cx="5" cy="5" r="1" fill="#A38560" />
+                    <line x1="0" y1="0" x2="10" y2="10" stroke="#A38560" strokeWidth="0.2" />
+                    <line x1="10" y1="0" x2="0" y2="10" stroke="#A38560" strokeWidth="0.2" />
                   </pattern>
                 </defs>
                 <rect width="100" height="140" fill="url(#vintage-pattern)" />

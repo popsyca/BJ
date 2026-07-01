@@ -53,21 +53,21 @@ export const Lobby: React.FC<LobbyProps> = ({
   return (
     <div className="min-h-[90vh] flex flex-col items-center justify-start p-4 md:p-8 max-w-4xl mx-auto w-full">
       {/* Header Info */}
-      <div className="w-full flex flex-col md:flex-row justify-between items-center bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 mb-8 gap-4 shadow-xl">
+      <div className="w-full flex flex-col md:flex-row justify-between items-center bg-forest/50 backdrop-blur-md border border-gold/20 rounded-2xl p-6 mb-8 gap-4 shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-indigo-500/10 rounded-full border border-indigo-500/20 text-indigo-400">
+          <div className="p-3 bg-gold/10 rounded-full border border-gold/20 text-gold">
             <UserIcon className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100 leading-tight">Hoş geldin, {user?.username}</h2>
-            <p className="text-xs text-slate-400">Krupiye bota karşı oyna ve şansını dene!</p>
+            <h2 className="text-xl font-bold text-platinum leading-tight">Hoş geldin, {user?.username}</h2>
+            <p className="text-xs text-gold/60">Krupiye bota karşı oyna ve şansını dene!</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
           {/* Chip Balance */}
-          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-5 py-2.5 rounded-xl text-emerald-400 font-bold text-lg">
-            <Coins className="w-5 h-5 text-emerald-400" />
+          <div className="flex items-center gap-3 bg-burgundy/20 border border-burgundy/40 px-5 py-2.5 rounded-xl text-gold font-bold text-lg">
+            <Coins className="w-5 h-5 text-gold" />
             <span>{user?.chips.toLocaleString()} Çip</span>
           </div>
 
@@ -76,7 +76,7 @@ export const Lobby: React.FC<LobbyProps> = ({
             <button
               onClick={handleClaimChips}
               disabled={claiming}
-              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold px-4 py-2.5 rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 text-sm cursor-pointer"
+              className="bg-gradient-to-r from-gold-dark to-gold hover:from-gold hover:to-gold-light text-spruce font-bold px-4 py-2.5 rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 text-sm cursor-pointer"
             >
               {claiming ? 'Yükleniyor...' : '500 Çip Al'}
             </button>
@@ -85,9 +85,9 @@ export const Lobby: React.FC<LobbyProps> = ({
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 font-medium px-4 py-2.5 rounded-xl border border-slate-700/50 transition duration-200 text-sm cursor-pointer"
+            className="flex items-center gap-2 bg-forest-light hover:bg-forest text-gold font-medium px-4 py-2.5 rounded-xl border border-gold/25 transition duration-200 text-sm cursor-pointer"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4 text-gold" />
             <span>Çıkış Yap</span>
           </button>
         </div>
@@ -97,33 +97,49 @@ export const Lobby: React.FC<LobbyProps> = ({
       {message && (
         <div className={`w-full max-w-xl text-center p-3.5 mb-6 rounded-xl text-sm font-semibold border ${
           message.type === 'success' 
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-            : 'bg-red-500/10 border-red-500/20 text-red-400'
+            ? 'bg-forest/40 border-gold/30 text-gold' 
+            : 'bg-red-950/40 border-red-900/50 text-red-300'
         }`}>
           {message.text}
         </div>
       )}
 
       {/* Play Game Panel */}
-      <div className="w-full max-w-xl bg-gradient-to-b from-slate-900/80 to-slate-950/80 backdrop-blur-md border border-slate-800/80 rounded-3xl p-8 flex flex-col items-center justify-center shadow-2xl mt-4 text-center">
-        <span className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">
+      <div className="w-full max-w-xl bg-gradient-to-b from-forest/70 to-spruce/95 backdrop-blur-md border border-gold/25 rounded-3xl p-8 flex flex-col items-center justify-center shadow-2xl mt-4 text-center">
+        <span className="px-4 py-1.5 bg-burgundy/30 border border-gold/25 text-gold-light rounded-full text-xs font-bold uppercase tracking-wider mb-4">
           Tek Oyunculu Mod
         </span>
 
-        <h1 className="text-3xl font-serif font-extrabold text-slate-100 tracking-wide mb-3">
+        <h1 className="text-3xl font-extrabold text-platinum tracking-wide mb-3">
           Krupiyeye Karşı Meydan Oku
         </h1>
-        <p className="text-slate-400 text-sm max-w-md mb-8 leading-relaxed">
+        <p className="text-gold/70 text-sm max-w-md mb-8 leading-relaxed">
           Diğer oyuncuları beklemeden, kendi hızınızda blackjack (21) oynayın. Hit, Stand ve Double Down hamleleriyle dealer botu alt edin!
         </p>
 
         <button
           onClick={handleStartGame}
-          className="w-full max-w-xs flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 hover:scale-[1.02] cursor-pointer text-lg uppercase tracking-wider"
+          className="w-full max-w-xs flex items-center justify-center gap-3 bg-gradient-to-r from-gold-dark via-gold to-gold-light text-spruce font-black py-4 px-8 rounded-2xl shadow-xl shadow-gold/5 hover:shadow-gold/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer text-lg uppercase tracking-wider"
         >
           <Play className="w-5 h-5 fill-current" />
           <span>Oyunu Başlat</span>
         </button>
+
+        {/* Large Chip Balance Display Under the Button */}
+        <div className="mt-8 flex flex-col items-center gap-2 animate-fade-in">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-gold/60 font-bold">Mevcut Bakiyeniz</span>
+          <div className="flex items-center gap-4 bg-spruce/60 border border-gold/20 px-6 py-3 rounded-2xl shadow-inner backdrop-blur-sm">
+            {/* A large, beautiful golden casino chip SVG representation */}
+            <div className="relative w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-tr from-gold-dark via-gold to-gold-light border-4 border-dashed border-spruce shadow-lg shrink-0">
+              <div className="absolute inset-[3px] rounded-full border border-dashed border-spruce/20 bg-spruce/30 flex items-center justify-center">
+                <Coins className="w-5 h-5 text-spruce" />
+              </div>
+            </div>
+            <span className="text-3xl font-black text-gold tracking-wide">
+              {user?.chips.toLocaleString()} <span className="text-2xl font-black text-gold">ÇİP</span>
+            </span>
+          </div>
+        </div>
       </div>
 
     </div>

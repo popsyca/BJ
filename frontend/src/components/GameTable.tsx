@@ -118,27 +118,37 @@ class CasinoAudio {
 const audio = new CasinoAudio();
 
 const renderCasinoChip = (amount: number, sizeClass = "w-10 h-10") => {
-  // Determine color based on amount
-  let color = '#dc2626'; // Default red (10)
-  let stripesColor = '#ffffff';
-  if (amount >= 500) color = '#7c3aed'; // Purple
-  else if (amount >= 100) color = '#18181b'; // Black
-  else if (amount >= 50) color = '#2563eb'; // Blue
-  else if (amount >= 25) color = '#059669'; // Green
+  // Determine color based on amount using premium custom theme
+  let color = '#E0E0E0'; // Platinum (10)
+  let stripesColor = '#390517'; // Burgundy stripes
+
+  if (amount >= 500) {
+    color = '#390517'; // Burgundy
+    stripesColor = '#A38560'; // Gold stripes
+  } else if (amount >= 100) {
+    color = '#03110D'; // Spruce
+    stripesColor = '#A38560'; // Gold stripes
+  } else if (amount >= 50) {
+    color = '#16302B'; // Forest
+    stripesColor = '#E0E0E0'; // Platinum stripes
+  } else if (amount >= 25) {
+    color = '#A38560'; // Gold
+    stripesColor = '#03110D'; // Spruce stripes
+  }
 
   return (
     <div 
-      className={`relative ${sizeClass} rounded-full flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5),inset_0_1.5px_3px_rgba(255,255,255,0.4),inset_0_-1.5px_3px_rgba(0,0,0,0.4)] border-4 border-dashed border-white select-none shrink-0`}
+      className={`relative ${sizeClass} rounded-full flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5),inset_0_1.5px_3px_rgba(255,255,255,0.2),inset_0_-1.5px_3px_rgba(0,0,0,0.4)] border-4 border-dashed select-none shrink-0`}
       style={{
         backgroundColor: color,
         borderColor: stripesColor,
       }}
     >
       {/* Inner Ring Layer */}
-      <div className="absolute inset-[3px] rounded-full border border-dashed border-white/20 bg-black/15 flex items-center justify-center">
+      <div className="absolute inset-[3px] rounded-full border border-dashed border-white/10 bg-black/20 flex items-center justify-center">
         {/* Denomination Center */}
-        <div className="w-[75%] h-[75%] rounded-full bg-white/95 shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.4)] flex items-center justify-center">
-          <span className="text-slate-900 font-black text-[9px] tracking-tight">{amount}</span>
+        <div className="w-[75%] h-[75%] rounded-full bg-white/90 shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.4)] flex items-center justify-center">
+          <span className={`text-slate-950 font-black text-[9px] tracking-tight`}>{amount}</span>
         </div>
       </div>
       {/* Glossy Overlay Reflection */}
@@ -268,8 +278,8 @@ export const GameTable: React.FC<GameTableProps> = ({
 
   if (!table) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#070b13] text-slate-400">
-        Masa kuruluyor...
+      <div className="flex flex-col items-center justify-center min-h-screen bg-spruce text-gold">
+        <span className="font-semibold text-sm tracking-wider uppercase">Masa kuruluyor...</span>
       </div>
     );
   }
@@ -304,20 +314,20 @@ export const GameTable: React.FC<GameTableProps> = ({
   const activeHand = isMyTurn && table.activeHandType === 'split' ? seat?.splitHand : seat?.hand;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#070b13] text-slate-100 select-none p-4 relative">
+    <div className="flex flex-col h-screen overflow-hidden bg-spruce text-platinum select-none p-4 relative">
       
       {/* Insurance Overlay Prompt Modal */}
       {table.gameState === 'INSURANCE_DECISION' && seat && (
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-fade-in">
-            <div className="p-4 bg-amber-500/10 rounded-full border border-amber-500/25 text-amber-400 mb-4 animate-bounce">
+        <div className="absolute inset-0 bg-spruce/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-forest border border-gold/30 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-fade-in">
+            <div className="p-4 bg-gold/10 rounded-full border border-gold/25 text-gold mb-4 animate-bounce">
               <ShieldAlert className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-slate-100 mb-2">Sigorta Satın Almak İster misiniz?</h3>
-            <p className="text-slate-400 text-xs md:text-sm mb-6 leading-relaxed">
+            <h3 className="text-xl font-bold text-platinum mb-2">Sigorta Satın Almak İster misiniz?</h3>
+            <p className="text-gold/70 text-xs md:text-sm mb-6 leading-relaxed">
               Krupiyenin açık kartı **As**. Krupiyenin Blackjack yapma ihtimaline karşı sigorta bahsi koyabilirsiniz. 
               <br />
-              <span className="text-amber-400 font-semibold block mt-2">
+              <span className="text-gold font-semibold block mt-2">
                 Sigorta Bedeli: {Math.floor(seat.hand.bet / 2)} Çip ({seat.hand.bet} bahsinin yarısı)
               </span>
               Kazanç durumunda 2:1 öder.
@@ -326,13 +336,13 @@ export const GameTable: React.FC<GameTableProps> = ({
               <button
                 onClick={() => handleInsurance(true)}
                 disabled={seat.chips < Math.floor(seat.hand.bet / 2)}
-                className="flex-1 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-950 font-bold py-3 rounded-xl transition cursor-pointer text-sm uppercase tracking-wider"
+                className="flex-1 bg-gradient-to-r from-gold-dark to-gold text-spruce font-bold py-3 rounded-xl transition cursor-pointer text-sm uppercase tracking-wider"
               >
                 Sigorta Al
               </button>
               <button
                 onClick={() => handleInsurance(false)}
-                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl transition cursor-pointer text-sm uppercase tracking-wider border border-slate-700/50"
+                className="flex-1 bg-forest-light hover:bg-forest text-gold border border-gold/25 font-bold py-3 rounded-xl transition cursor-pointer text-sm uppercase tracking-wider"
               >
                 Pas Geç
               </button>
@@ -345,35 +355,35 @@ export const GameTable: React.FC<GameTableProps> = ({
       <div className="flex justify-between items-center z-10 w-full max-w-5xl mx-auto mb-4">
         <button
           onClick={onBackToLobby}
-          className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 hover:bg-slate-800 text-slate-300 font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer text-sm"
+          className="flex items-center gap-2 bg-forest/60 border border-gold/20 hover:bg-forest text-gold font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer text-sm"
         >
-          <ArrowLeft className="w-4 h-4" /> Lobiye Dön
+          <ArrowLeft className="w-4 h-4 text-gold" /> Lobiye Dön
         </button>
 
         <div className="text-center">
-          <h2 className="font-extrabold text-sm md:text-lg text-slate-100 tracking-wider">TEK KİŞİLİK CASINO</h2>
-          <p className="text-xs text-slate-500 font-medium">Krupiye Limit: {table.minBet} - {table.maxBet} $</p>
+          <h2 className="font-extrabold text-sm md:text-lg text-gold tracking-wider">TEK KİŞİLİK CASINO</h2>
+          <p className="text-xs text-gold/60 font-medium">Krupiye Limit: {table.minBet} - {table.maxBet} $</p>
         </div>
 
         <button
           onClick={() => setSoundEnabled(!soundEnabled)}
-          className="p-2.5 bg-slate-900/80 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-slate-100 rounded-xl transition cursor-pointer"
+          className="p-2.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold rounded-xl transition cursor-pointer"
         >
-          {soundEnabled ? <Volume2 className="w-4 h-4 text-indigo-400" /> : <VolumeX className="w-4 h-4" />}
+          {soundEnabled ? <Volume2 className="w-4 h-4 text-gold" /> : <VolumeX className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Error notification banner */}
       {errorMessage && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-950 border border-red-500 text-red-300 px-6 py-2.5 rounded-full shadow-2xl text-xs md:text-sm font-semibold animate-pulse">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-950/95 border border-red-800 text-red-300 px-6 py-2.5 rounded-full shadow-2xl text-xs md:text-sm font-semibold animate-pulse">
           {errorMessage}
         </div>
       )}
 
       {/* Turn notification banner */}
       {table.gameState === 'PLAYING' && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-indigo-950/95 border-2 border-indigo-500 text-indigo-200 px-8 py-3 rounded-2xl shadow-[0_10px_35px_rgba(99,102,241,0.45)] text-xs md:text-sm font-extrabold animate-bounce flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping"></div>
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-burgundy/95 border-2 border-gold text-gold px-8 py-3 rounded-2xl shadow-[0_10px_35px_rgba(163,133,96,0.3)] text-xs md:text-sm font-extrabold animate-bounce flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-gold animate-ping"></div>
           <span>
             Karar Verme Sırası Sizde! {seat?.splitHand ? `(Aktif El: ${table.activeHandType === 'main' ? 'Birinci El' : 'İkinci El'})` : ''}
           </span>
@@ -381,36 +391,22 @@ export const GameTable: React.FC<GameTableProps> = ({
       )}
 
       {/* Outer Table Rim (Black Leather Bumper) */}
-      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-zinc-900 select-none">
+      <div className="flex-1 flex flex-col justify-between rounded-t-full w-full max-w-4xl mx-auto relative min-h-[400px] p-[10px] md:p-[14px] bg-zinc-950 shadow-[0_20px_40px_rgba(0,0,0,0.85),inset_0_3px_8px_rgba(255,255,255,0.06),inset_0_-8px_16px_rgba(0,0,0,0.95)] border-[3px] border-burgundy/25 select-none">
         
         {/* Inner Wood Panel Frame */}
-        <div className="flex-1 flex flex-col justify-between rounded-t-full bg-gradient-to-b from-[#5c2317] via-[#3b1209] to-[#2d0e07] p-[10px] md:p-[16px] shadow-[inset_0_4px_10px_rgba(0,0,0,0.95),0_6px_12px_rgba(0,0,0,0.7)] border border-[#78350f]/20 relative">
+        <div className="flex-1 flex flex-col justify-between rounded-t-full bg-gradient-to-b from-[#390517] via-[#24030e] to-[#160209] p-[10px] md:p-[16px] shadow-[inset_0_4px_10px_rgba(0,0,0,0.95),0_6px_12px_rgba(0,0,0,0.7)] border border-gold/15 relative">
           
-          {/* Metal Cup Holders - Left */}
-          <div className="absolute left-[1.5%] top-[55%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
-            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
-          </div>
-          <div className="absolute left-[4.5%] top-[25%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
-            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
-          </div>
-          
-          {/* Metal Cup Holders - Right */}
-          <div className="absolute right-[1.5%] top-[55%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
-            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
-          </div>
-          <div className="absolute right-[4.5%] top-[25%] w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 border border-zinc-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.65),0_2px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-25">
-            <div className="w-[80%] h-[80%] rounded-full bg-zinc-900 shadow-[inset_0_3px_5px_rgba(0,0,0,0.95)]"></div>
-          </div>
+
 
           {/* Green Felt Inner Area */}
-          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16803d_0%,_#14532d_60%,_#064e3b_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-6 md:p-8 relative overflow-hidden border-b-0 min-h-[420px] md:min-h-[500px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
+          <div className="flex-1 flex flex-col justify-between rounded-t-full bg-[radial-gradient(circle_at_center,_#16302B_0%,_#0c1a17_70%,_#03110D_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.9)] p-6 md:p-8 relative overflow-hidden border-b-0 min-h-[420px] md:min-h-[500px] z-10 [border-top-left-radius:inherit] [border-top-right-radius:inherit]">
             
             {/* Classic Casino Markings Container */}
             <div className="absolute inset-0 pointer-events-none select-none z-5 overflow-hidden rounded-t-full">
               
               {/* Giant BLACKJACK Logo */}
               <div className="absolute top-[52%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full">
-                <h1 className="text-6xl md:text-8xl font-serif font-black tracking-[0.25em] text-amber-500/10 mix-blend-overlay">
+                <h1 className="text-6xl md:text-8xl font-serif font-black tracking-[0.25em] text-gold/15 mix-blend-overlay">
                   BLACKJACK
                 </h1>
               </div>
@@ -421,8 +417,8 @@ export const GameTable: React.FC<GameTableProps> = ({
               {/* Decorative Betting Circles (5 spots) */}
               <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] md:w-full flex justify-center gap-6 md:gap-20">
                 {[...Array(5)].map((_, i) => (
-                  <div key={`bet-circle-${i}`} className={`w-14 h-14 md:w-20 md:h-20 rounded-full border-[2px] border-amber-500/20 p-[2px] md:p-1 ${i === 2 ? 'border-amber-400/40 bg-black/10 shadow-[inset_0_0_15px_rgba(251,191,36,0.1)]' : ''}`}>
-                    <div className="w-full h-full rounded-full border border-amber-500/30 flex items-center justify-center">
+                  <div key={`bet-circle-${i}`} className={`w-14 h-14 md:w-20 md:h-20 rounded-full border-[2px] border-gold/25 p-[2px] md:p-1 ${i === 2 ? 'border-gold/45 bg-black/20 shadow-[inset_0_0_15px_rgba(163,133,96,0.15)]' : ''}`}>
+                    <div className="w-full h-full rounded-full border border-gold/30 flex items-center justify-center">
                       <div className="w-[85%] h-[85%] rounded-full border-[0.5px] border-white/10" />
                     </div>
                   </div>
@@ -434,9 +430,9 @@ export const GameTable: React.FC<GameTableProps> = ({
             {/* Dealer Section */}
             <div className="flex flex-col items-center mt-2 z-10 relative">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-400/80 drop-shadow-md">Krupiye Bot</span>
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-gold drop-shadow-md">Krupiye Bot</span>
                 {table.dealerHand.cards.length > 0 && (
-                  <span className="bg-emerald-950/90 border border-emerald-500/30 text-emerald-400 px-2 md:px-2.5 py-0.5 rounded text-[10px] md:text-xs font-bold shadow-lg">
+                  <span className="bg-spruce border border-gold/20 text-gold px-2 md:px-2.5 py-0.5 rounded text-[10px] md:text-xs font-bold shadow-lg">
                     Skor: {table.dealerHand.score}
                   </span>
                 )}
@@ -458,22 +454,22 @@ export const GameTable: React.FC<GameTableProps> = ({
             {/* Game Phase Notification HUD */}
             <div className="absolute top-[35%] left-1/2 -translate-x-1/2 z-10 w-full text-center pointer-events-none select-none">
               {table.gameState === 'BETTING' && (
-                <div className="inline-block bg-slate-950/90 border border-amber-500/20 px-6 py-2 rounded-full text-amber-400 text-xs md:text-sm font-bold shadow-lg">
+                <div className="inline-block bg-spruce/95 border border-gold/30 px-6 py-2 rounded-full text-gold text-xs md:text-sm font-bold shadow-lg">
                   Bahsinizi Belirleyin ve Oyunu Başlatın
                 </div>
               )}
               {table.gameState === 'DEALING' && (
-                <div className="inline-block bg-slate-950/95 border border-indigo-500/20 px-6 py-2 rounded-full text-indigo-300 text-xs md:text-sm font-bold shadow-lg animate-pulse">
+                <div className="inline-block bg-spruce/95 border border-gold/30 px-6 py-2 rounded-full text-gold text-xs md:text-sm font-bold shadow-lg animate-pulse">
                   Kartlar Dağıtılıyor...
                 </div>
               )}
               {table.gameState === 'DEALER_TURN' && (
-                <div className="inline-block bg-slate-950/90 border border-red-500/20 px-6 py-2 rounded-full text-red-400 text-xs md:text-sm font-bold shadow-lg">
+                <div className="inline-block bg-burgundy border border-gold/30 px-6 py-2 rounded-full text-gold text-xs md:text-sm font-bold shadow-lg">
                   Krupiye Bot Oynuyor...
                 </div>
               )}
               {table.gameState === 'SETTLED' && (
-                <div className="inline-block bg-slate-950/90 border border-emerald-500/20 px-6 py-2 rounded-full text-slate-200 text-xs md:text-sm font-bold shadow-lg">
+                <div className="inline-block bg-forest/95 border border-gold/30 px-6 py-2 rounded-full text-platinum text-xs md:text-sm font-bold shadow-lg">
                   El Sonuçlandı! Yeni Bahisler Başlıyor.
                 </div>
               )}
@@ -491,8 +487,8 @@ export const GameTable: React.FC<GameTableProps> = ({
                   } ${
                     seat.splitHand 
                       ? (table.activeHandType === 'main' && table.gameState === 'PLAYING'
-                         ? 'bg-slate-900/85 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
-                         : 'bg-slate-950/50 border-2 border-slate-800 scale-95 opacity-80') 
+                         ? 'bg-forest/90 border-2 border-gold shadow-[0_0_20px_rgba(163,133,96,0.3)] scale-[1.03]' 
+                         : 'bg-spruce/60 border-2 border-gold/20 scale-95 opacity-80') 
                       : 'border-2 border-transparent bg-transparent'
                   }`}
                 >
@@ -504,16 +500,16 @@ export const GameTable: React.FC<GameTableProps> = ({
 
                   {/* Score details */}
                   {seat.placedBet && seat.hand.cards.length > 0 && (
-                    <div className="flex items-center gap-1 bg-slate-950/90 border border-slate-800 rounded px-1.5 py-0.5 mt-1 shadow-lg">
-                      <span className="text-[8px] text-slate-400 uppercase font-bold tracking-wider">
+                    <div className="flex items-center gap-1 bg-spruce border border-gold/25 rounded px-1.5 py-0.5 mt-1 shadow-lg">
+                      <span className="text-[8px] text-gold uppercase font-bold tracking-wider">
                         {seat.splitHand ? 'El 1' : 'Eliniz'}
                       </span>
-                      <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[9px] font-bold">
+                      <span className="bg-forest text-platinum px-1 py-0.2 rounded text-[9px] font-bold">
                         {seat.hand.score}
                       </span>
-                      {seat.hand.status === 'bust' && <span className="bg-red-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
-                      {seat.hand.status === 'blackjack' && <span className="bg-amber-500 text-slate-950 px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">BJ</span>}
-                      {seat.hand.status === 'stand' && <span className="bg-indigo-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Stand</span>}
+                      {seat.hand.status === 'bust' && <span className="bg-red-950/95 text-red-300 border border-red-800 px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
+                      {seat.hand.status === 'blackjack' && <span className="bg-gold text-spruce px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">BJ</span>}
+                      {seat.hand.status === 'stand' && <span className="bg-burgundy text-platinum px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Stand</span>}
                     </div>
                   )}
                 </div>
@@ -523,8 +519,8 @@ export const GameTable: React.FC<GameTableProps> = ({
                   <div 
                     className={`absolute transition-all duration-300 flex flex-col items-center p-1 rounded-2xl z-20 left-[64%] top-[61%] -translate-x-1/2 -translate-y-1/2 rotate-12 ${
                       table.activeHandType === 'split' && table.gameState === 'PLAYING'
-                        ? 'bg-slate-900/85 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.03]' 
-                        : 'bg-slate-950/50 border-2 border-slate-800 scale-95 opacity-80'
+                        ? 'bg-forest/90 border-2 border-gold shadow-[0_0_20px_rgba(163,133,96,0.3)] scale-[1.03]' 
+                        : 'bg-spruce/60 border-2 border-gold/20 scale-95 opacity-80'
                     }`}
                   >
                     <div className="flex -space-x-8 md:-space-x-10 justify-center mb-1 px-1 min-h-[96px] md:min-h-[112px]">
@@ -535,28 +531,28 @@ export const GameTable: React.FC<GameTableProps> = ({
 
                     {/* Score details */}
                     {seat.splitHand.cards.length > 0 && (
-                      <div className="flex items-center gap-1 bg-slate-950/90 border border-slate-800 rounded px-1.5 py-0.5 mt-1 shadow-lg">
-                        <span className="text-[8px] text-slate-400 uppercase font-bold tracking-wider">El 2</span>
-                        <span className="bg-slate-850 text-slate-200 px-1 py-0.2 rounded text-[9px] font-bold">
+                      <div className="flex items-center gap-1 bg-spruce border border-gold/25 rounded px-1.5 py-0.5 mt-1 shadow-lg">
+                        <span className="text-[8px] text-gold uppercase font-bold tracking-wider">El 2</span>
+                        <span className="bg-forest text-platinum px-1 py-0.2 rounded text-[9px] font-bold">
                           {seat.splitHand.score}
                         </span>
-                        {seat.splitHand.status === 'bust' && <span className="bg-red-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
-                        {seat.splitHand.status === 'blackjack' && <span className="bg-amber-500 text-slate-950 px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">BJ</span>}
-                        {seat.splitHand.status === 'stand' && <span className="bg-indigo-500/90 text-white px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Stand</span>}
+                        {seat.splitHand.status === 'bust' && <span className="bg-red-950/95 text-red-300 border border-red-800 px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Bust</span>}
+                        {seat.splitHand.status === 'blackjack' && <span className="bg-gold text-spruce px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">BJ</span>}
+                        {seat.splitHand.status === 'stand' && <span className="bg-burgundy text-platinum px-1.5 rounded text-[8px] font-bold uppercase tracking-wide">Stand</span>}
                       </div>
                     )}
                   </div>
                 )}
 
                 {/* Player Profile Details Card (Stable Bottom Center, holding the chips on the left) */}
-                <div className="absolute left-1/2 bottom-3 -translate-x-1/2 z-30 bg-slate-950/95 border border-slate-800/80 rounded-2xl p-3 w-64 shadow-2xl flex items-center gap-3">
+                <div className="absolute left-1/2 bottom-3 -translate-x-1/2 z-30 bg-forest/90 border border-gold/30 rounded-2xl p-3 w-64 shadow-2xl flex items-center gap-3">
                   {/* Bet stack as real casino chips to the left of the user's name */}
                   {seat.placedBet && seat.hand.bet > 0 && (
-                    <div className="flex gap-1 items-center justify-center border-r border-slate-800/80 pr-3">
+                    <div className="flex gap-1 items-center justify-center border-r border-gold/20 pr-3">
                       {renderCasinoChip(seat.hand.bet, "w-10 h-10")}
                       {seat.splitHand && seat.splitHand.bet > 0 && (
                         <>
-                          <span className="text-[9px] font-black text-slate-600">+</span>
+                          <span className="text-[9px] font-black text-gold">+</span>
                           {renderCasinoChip(seat.splitHand.bet, "w-10 h-10")}
                         </>
                       )}
@@ -566,14 +562,14 @@ export const GameTable: React.FC<GameTableProps> = ({
                   {/* Profile texts */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                      <p className="text-xs font-bold text-slate-100 truncate">{seat.username}</p>
+                      <div className="w-2 h-2 rounded-full bg-gold animate-pulse"></div>
+                      <p className="text-xs font-bold text-platinum truncate">{seat.username}</p>
                     </div>
-                    <p className="text-[10px] text-emerald-400 font-semibold mt-0.5">{seat.chips.toLocaleString()} Çip</p>
+                    <p className="text-[10px] text-gold font-semibold mt-0.5">{seat.chips.toLocaleString()} Çip</p>
                     
                     {/* Insurance Indicator Tag */}
                     {table.insuranceBet > 0 && (
-                      <div className="mt-1 inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full text-[8px] font-bold">
+                      <div className="mt-1 inline-flex items-center gap-1 bg-burgundy/30 border border-gold/25 text-gold-light px-2 py-0.5 rounded-full text-[8px] font-bold">
                         <ShieldAlert className="w-2.5 h-2.5" />
                         <span>Sigorta: {table.insuranceBet} $</span>
                       </div>
@@ -592,12 +588,12 @@ export const GameTable: React.FC<GameTableProps> = ({
       </div>
 
       {/* Action Controls HUD */}
-      <div className="z-10 bg-slate-950/60 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 w-full max-w-4xl mx-auto mt-4 shadow-2xl">
+      <div className="z-10 bg-forest/60 backdrop-blur-md border border-gold/25 rounded-2xl p-4 w-full max-w-4xl mx-auto mt-4 shadow-2xl">
         
         {/* Betting options */}
         {seat && table.gameState === 'BETTING' && !seat.placedBet && (
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">Bahsinizi Seçin</span>
+            <span className="text-xs font-bold tracking-wider text-gold uppercase">Bahsinizi Seçin</span>
             <div className="flex flex-wrap gap-3 md:gap-5 justify-center items-center py-1">
               {[10, 25, 50, 100, 500].map((val) => (
                 <button
@@ -605,7 +601,7 @@ export const GameTable: React.FC<GameTableProps> = ({
                   onClick={() => setBetSelection(val)}
                   className={`transition cursor-pointer rounded-full p-0.5 select-none ${
                     betSelection === val 
-                      ? 'ring-4 ring-amber-400 scale-115 shadow-xl shadow-amber-500/20' 
+                      ? 'ring-4 ring-gold scale-115 shadow-xl shadow-gold/20' 
                       : 'opacity-85 hover:opacity-100 hover:scale-105'
                   }`}
                 >
@@ -615,7 +611,7 @@ export const GameTable: React.FC<GameTableProps> = ({
             </div>
             <button
               onClick={() => handlePlaceBet(betSelection)}
-              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold px-8 py-2.5 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm uppercase tracking-wider"
+              className="bg-gradient-to-r from-gold-dark to-gold text-spruce font-black px-8 py-2.5 rounded-xl shadow-lg shadow-gold/5 transition duration-200 cursor-pointer text-sm uppercase tracking-wider"
             >
               {betSelection} Çip ile Oyunu Başlat
             </button>
@@ -625,26 +621,26 @@ export const GameTable: React.FC<GameTableProps> = ({
         {/* Action Options (Hit, Stand, Double, Split) */}
         {isMyTurn && activeHand && (
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold tracking-wider text-slate-300 uppercase">
+            <span className="text-xs font-bold tracking-wider text-gold uppercase">
               Hamlenizi Seçin {seat.splitHand ? `(${table.activeHandType === 'main' ? 'El 1' : 'El 2'})` : ''}
             </span>
             <div className="flex flex-wrap gap-3 w-full max-w-2xl justify-center">
               <button
                 onClick={() => handleAction('hit')}
-                className="flex-1 min-w-[120px] max-w-[160px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
+                className="flex-1 min-w-[120px] max-w-[160px] bg-burgundy hover:bg-burgundy-light text-platinum border border-gold/30 font-bold py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
               >
                 Hit (Kart Çek)
               </button>
               <button
                 onClick={() => handleAction('stand')}
-                className="flex-1 min-w-[120px] max-w-[160px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 rounded-xl border border-slate-700 transition duration-200 cursor-pointer text-sm"
+                className="flex-1 min-w-[120px] max-w-[160px] bg-forest-light hover:bg-forest text-gold border border-gold/25 font-bold py-3 rounded-xl transition duration-200 cursor-pointer text-sm"
               >
                 Stand (Dur)
               </button>
               {activeHand.cards.length === 2 && seat.chips >= activeHand.bet && (
                 <button
                   onClick={() => handleAction('double')}
-                  className="flex-1 min-w-[120px] max-w-[160px] bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
+                  className="flex-1 min-w-[120px] max-w-[160px] bg-gradient-to-r from-gold-dark via-gold to-gold-light hover:from-gold hover:to-gold-light text-spruce font-black py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
                 >
                   Double Down
                 </button>
@@ -652,7 +648,7 @@ export const GameTable: React.FC<GameTableProps> = ({
               {canSplit && (
                 <button
                   onClick={() => handleAction('split')}
-                  className="flex-1 min-w-[120px] max-w-[160px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
+                  className="flex-1 min-w-[120px] max-w-[160px] bg-forest hover:bg-forest-light text-platinum border border-gold/20 font-bold py-3 rounded-xl shadow-lg transition duration-200 cursor-pointer text-sm"
                 >
                   Böl (Split)
                 </button>
@@ -663,7 +659,7 @@ export const GameTable: React.FC<GameTableProps> = ({
 
         {/* Settled or dealing transition status messages */}
         {seat && seat.placedBet && table.gameState !== 'PLAYING' && table.gameState !== 'BETTING' && table.gameState !== 'INSURANCE_DECISION' && (
-          <div className="text-center text-sm font-semibold text-slate-500 py-2">
+          <div className="text-center text-sm font-semibold text-gold/60 py-2">
             {table.gameState === 'DEALING' ? 'Kartlar veriliyor...' : 
              table.gameState === 'DEALER_TURN' ? 'Krupiye bot oynuyor...' : 
              'Tur sonlandı, kazançlar dağıtılıyor...'}
