@@ -47,6 +47,11 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Root path health check
+app.get('/', (req, res) => {
+  res.json({ message: 'Royal Blackjack API is running successfully!' });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 
