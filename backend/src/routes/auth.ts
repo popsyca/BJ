@@ -12,17 +12,10 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined in environment variables');
 }
 
-// Brute-force rate limiting: 5 requests per 15 minutes per IP
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per window
-  message: { message: 'Çok fazla deneme yaptınız. Lütfen 15 dakika sonra tekrar deneyin.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+
 
 // Register
-router.post('/register', authLimiter, async (req, res): Promise<void> => {
+router.post('/register', async (req, res): Promise<void> => {
   try {
     const { username, password } = req.body;
 
@@ -72,7 +65,7 @@ router.post('/register', authLimiter, async (req, res): Promise<void> => {
 });
 
 // Login
-router.post('/login', authLimiter, async (req, res): Promise<void> => {
+router.post('/login', async (req, res): Promise<void> => {
   try {
     const { username, password } = req.body;
 
