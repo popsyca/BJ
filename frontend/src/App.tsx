@@ -22,6 +22,7 @@ export default function App() {
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
+  const [authSuccessMessage, setAuthSuccessMessage] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
   // Fetch current user details using cookie credentials
@@ -110,7 +111,15 @@ export default function App() {
       if (response.ok) {
         setUsernameInput('');
         setPasswordInput('');
-        await fetchUser();
+        if (!isLogin) {
+          setAuthSuccessMessage('Başarıyla kaydoldunuz! Lobiye yönlendiriliyorsunuz...');
+          setTimeout(async () => {
+            setAuthSuccessMessage(null);
+            await fetchUser();
+          }, 2000);
+        } else {
+          await fetchUser();
+        }
       } else {
         setAuthError(data.message || 'Giriş işlemi başarısız oldu.');
       }
@@ -138,18 +147,28 @@ export default function App() {
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-burgundy/15 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-gold/10 rounded-full blur-[120px]" />
 
-        <div className="w-full max-w-md bg-forest/50 backdrop-blur-xl border border-gold/25 p-8 rounded-3xl shadow-2xl relative z-10">
+        <div className={`w-full max-w-md backdrop-blur-xl border p-8 rounded-3xl shadow-2xl relative z-10 transition-all duration-300 ${
+          isLogin 
+            ? 'bg-forest/50 border-gold/25' 
+            : 'bg-burgundy/30 border-gold/40 shadow-burgundy/5'
+        }`}>
           
           {/* Logo / Header */}
           <div className="flex flex-col items-center mb-8 text-center">
-            <div className="w-16 h-16 bg-gradient-to-tr from-gold-dark via-gold to-gold-light rounded-2xl flex items-center justify-center shadow-lg shadow-gold/20 mb-4 border border-gold/40">
-              <Coins className="w-9 h-9 text-spruce" />
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4 border transition-all duration-300 ${
+              isLogin
+                ? 'bg-gradient-to-tr from-gold-dark via-gold to-gold-light shadow-gold/20 border-gold/40'
+                : 'bg-gradient-to-tr from-burgundy-light via-burgundy to-black shadow-burgundy/30 border-gold/50'
+            }`}>
+              <Coins className={`w-9 h-9 ${isLogin ? 'text-spruce' : 'text-gold'}`} />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-platinum via-gold-light to-gold bg-clip-text text-transparent">
-              ROYAL BLACKJACK
+              {isLogin ? 'ROYAL BLACKJACK' : 'YENİ ÜYE KAYDI'}
             </h1>
             <p className="text-gold/70 text-xs mt-2 font-medium max-w-[280px]">
-              Gerçek Zamanlı Çok Oyunculu Casino Deneyimi
+              {isLogin 
+                ? 'Gerçek Zamanlı Çok Oyunculu Casino Deneyimi' 
+                : 'Kaydolun ve 1.000 Bedava Casino Çipi Kazanın!'}
             </p>
           </div>
 
@@ -159,6 +178,13 @@ export default function App() {
               <div className="flex items-center gap-2 p-3 bg-red-950/40 border border-red-900/50 rounded-xl text-red-300 text-xs font-semibold">
                 <ShieldAlert className="w-4 h-4 shrink-0" />
                 <span>{authError}</span>
+              </div>
+            )}
+
+            {authSuccessMessage && (
+              <div className="flex items-center gap-2 p-3 bg-forest/40 border border-gold/30 rounded-xl text-gold text-xs font-semibold animate-pulse">
+                <Sparkles className="w-4 h-4 text-gold shrink-0 animate-spin" />
+                <span>{authSuccessMessage}</span>
               </div>
             )}
 
@@ -197,7 +223,11 @@ export default function App() {
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full bg-gradient-to-r from-gold-dark via-gold to-gold-light hover:from-gold hover:to-gold-light text-spruce font-black py-3.5 rounded-xl shadow-xl shadow-gold/5 hover:shadow-gold/15 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer mt-2"
+              className={`w-full font-black py-3.5 rounded-xl shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer mt-2 ${
+                isLogin
+                  ? 'bg-gradient-to-r from-gold-dark via-gold to-gold-light hover:from-gold hover:to-gold-light text-spruce shadow-gold/5 hover:shadow-gold/15'
+                  : 'bg-gradient-to-r from-burgundy-light via-burgundy to-black hover:opacity-90 text-gold border border-gold/30 shadow-burgundy/10 hover:shadow-burgundy/25'
+              }`}
             >
               <span>{authLoading ? 'İşlem yapılıyor...' : isLogin ? 'Giriş Yap' : 'Kayıt Ol'}</span>
               {!authLoading && <ArrowRight className="w-4 h-4" />}

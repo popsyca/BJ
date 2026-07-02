@@ -351,20 +351,19 @@ export const GameTable: React.FC<GameTableProps> = ({
         </div>
       )}
 
-      {/* Top bar controls */}
       <div className="grid grid-cols-3 items-center z-10 w-full max-w-5xl mx-auto mb-2 md:mb-4">
         <div className="flex justify-start">
           <button
             onClick={onBackToLobby}
-            className="flex items-center gap-2 bg-forest/60 border border-gold/20 hover:bg-forest text-gold font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer text-sm"
+            className="flex items-center gap-1.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold font-semibold px-2 sm:px-4 py-2 rounded-xl transition cursor-pointer text-xs sm:text-sm"
           >
-            <ArrowLeft className="w-4 h-4 text-gold" /> Lobiye Dön
+            <ArrowLeft className="w-3.5 h-3.5 text-gold" /> <span className="hidden xs:inline">Lobiye Dön</span><span className="xs:hidden">Geri</span>
           </button>
         </div>
 
         <div className="text-center">
-          <h2 className="font-extrabold text-sm md:text-lg text-gold tracking-wider">TEK KİŞİLİK CASINO</h2>
-          <p className="text-xs text-gold/60 font-medium">Krupiye Limit: {table.minBet} - {table.maxBet} $</p>
+          <h2 className="font-extrabold text-[10px] sm:text-sm md:text-lg text-gold tracking-wider">TEK KİŞİLİK CASINO</h2>
+          <p className="text-[8px] sm:text-xs text-gold/60 font-medium">Krupiye: {table.minBet}-{table.maxBet}$</p>
         </div>
 
         <div className="flex justify-end">
@@ -419,9 +418,9 @@ export const GameTable: React.FC<GameTableProps> = ({
               {/* Dealer Rules Text (Removed) */}
 
               {/* Decorative Betting Circles (5 spots) */}
-              <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] md:w-full flex justify-center gap-6 md:gap-20">
+              <div className="absolute bottom-2 md:bottom-4 left-1/2 transform -translate-x-1/2 w-full flex justify-center gap-1.5 sm:gap-6 md:gap-20">
                 {[...Array(5)].map((_, i) => (
-                  <div key={`bet-circle-${i}`} className={`w-14 h-14 md:w-20 md:h-20 rounded-full border-[2px] border-gold/25 p-[2px] md:p-1 ${i === 2 ? 'border-gold/45 bg-black/20 shadow-[inset_0_0_15px_rgba(163,133,96,0.15)]' : ''}`}>
+                  <div key={`bet-circle-${i}`} className={`w-7 h-7 sm:w-14 sm:h-14 md:w-20 md:h-20 rounded-full border-[1.5px] md:border-[2px] border-gold/25 p-[1px] md:p-1 ${i === 2 ? 'border-gold/45 bg-black/20 shadow-[inset_0_0_15px_rgba(163,133,96,0.15)]' : ''}`}>
                     <div className="w-full h-full rounded-full border border-gold/30 flex items-center justify-center">
                       <div className="w-[85%] h-[85%] rounded-full border-[0.5px] border-white/10" />
                     </div>
