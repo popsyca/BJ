@@ -24,6 +24,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSuccessMessage, setAuthSuccessMessage] = useState<string | null>(null);
+  const [showWakingUpMessage, setShowWakingUpMessage] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
 
   // Fetch current user details using cookie credentials
@@ -74,7 +75,14 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchUser();
+    const timer = setTimeout(() => {
+      setShowWakingUpMessage(true);
+    }, 3000);
+
+    fetchUser().finally(() => {
+      clearTimeout(timer);
+      setShowWakingUpMessage(false);
+    });
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'LOGIN') {
@@ -187,9 +195,19 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-spruce text-gold">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-spruce text-gold px-4 text-center">
         <Sparkles className="w-10 h-10 animate-spin mb-4 text-gold" />
         <span className="font-semibold text-sm tracking-wider uppercase">Yükleniyor...</span>
+        {showWakingUpMessage && (
+          <div className="mt-6 max-w-xs animate-fade-in">
+            <p className="text-xs text-gold/70 leading-relaxed font-bold">
+              Sunucu Uyandırılıyor...
+            </p>
+            <p className="text-[10px] text-gold/40 mt-1.5 leading-relaxed">
+              Render ücretsiz planı kullanıldığından, 15 dakika işlem yapılmadığında sunucu otomatik olarak uyku moduna geçer. İlk açılış 30-50 saniye sürebilir.
+            </p>
+          </div>
+        )}
       </div>
     );
   }
