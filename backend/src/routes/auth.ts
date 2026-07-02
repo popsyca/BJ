@@ -1,14 +1,28 @@
 import express, { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { UserDb } from '../models/User';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretblackjackkey';
+
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
+// Brute-force rate limiting: 5 requests per 15 minutes per IP
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per window
+  message: { message: 'Çok fazla deneme yaptınız. Lütfen 15 dakika sonra tekrar deneyin.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Register
-router.post('/register', async (req, res): Promise<void> => {
+router.post('/register', authLimiter, async (req, res): Promise<void> => {
   try {
     const { username, password } = req.body;
 
@@ -34,6 +48,14 @@ router.post('/register', async (req, res): Promise<void> => {
       { expiresIn: '7d' }
     );
 
+    // Set HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     res.status(201).json({
       token,
       user: {
@@ -49,7 +71,7 @@ router.post('/register', async (req, res): Promise<void> => {
 });
 
 // Login
-router.post('/login', async (req, res): Promise<void> => {
+router.post('/login', authLimiter, async (req, res): Promise<void> => {
   try {
     const { username, password } = req.body;
 
@@ -76,6 +98,14 @@ router.post('/login', async (req, res): Promise<void> => {
       { expiresIn: '7d' }
     );
 
+    // Set HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     res.status(200).json({
       token,
       user: {
@@ -88,6 +118,12 @@ router.post('/login', async (req, res): Promise<void> => {
     console.error(error);
     res.status(500).json({ message: 'Sunucu hatası.' });
   }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Başarıyla çıkış yapıldı.' });
 });
 
 // Get current user

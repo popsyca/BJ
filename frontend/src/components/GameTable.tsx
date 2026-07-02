@@ -314,7 +314,7 @@ export const GameTable: React.FC<GameTableProps> = ({
   const activeHand = isMyTurn && table.activeHandType === 'split' ? seat?.splitHand : seat?.hand;
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-spruce text-platinum select-none p-3 md:p-4 relative">
+    <div className="flex flex-col min-h-screen bg-spruce text-platinum select-none p-3 md:p-4 pb-8 relative">
       
       {/* Insurance Overlay Prompt Modal */}
       {table.gameState === 'INSURANCE_DECISION' && seat && (
@@ -679,6 +679,9 @@ export const GameTable: React.FC<GameTableProps> = ({
         )}
       </div>
 
+      <footer className="w-full text-center py-4 mt-6 text-[11px] text-gold/40 tracking-wider font-medium select-none z-10">
+        Made by İrem TUNÇ and İncilay KURTULUŞ, 2026
+      </footer>
     </div>
   );
 };

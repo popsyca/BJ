@@ -3,7 +3,24 @@ import jwt from 'jsonwebtoken';
 import { Table } from '../game/Table';
 import { UserDb } from '../models/User';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretblackjackkey';
+const JWT_SECRET = process.env.JWT_SECRET as string;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
+function parseCookies(cookieHeader?: string): Record<string, string> {
+  const list: Record<string, string> = {};
+  if (!cookieHeader) return list;
+  cookieHeader.split(';').forEach((cookie) => {
+    const parts = cookie.split('=');
+    const name = parts.shift()?.trim();
+    const value = parts.join('=')?.trim();
+    if (name) {
+      list[name] = decodeURIComponent(value);
+    }
+  });
+  return list;
+}
 
 // Keep track of private tables per userId
 const activeTables: Record<string, Table> = {};
@@ -12,14 +29,15 @@ export function initSockets(io: Server) {
   
   // Socket authentication middleware
   io.use(async (socket: Socket & { userId?: string; username?: string }, next) => {
-    const token = socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
+    const cookies = parseCookies(socket.handshake.headers.cookie);
+    const token = cookies.token || socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
 
     if (!token) {
       return next(new Error('Authentication error: Token required'));
     }
 
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as unknown as { id: string; username: string };
       socket.userId = decoded.id;
       socket.username = decoded.username;
       next();

@@ -8,6 +8,8 @@ interface LobbyProps {
   onRefreshUser: () => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const Lobby: React.FC<LobbyProps> = ({
   user,
   onJoinTable,
@@ -22,13 +24,12 @@ export const Lobby: React.FC<LobbyProps> = ({
     setClaiming(true);
     setMessage(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/claim-chips', {
+      const response = await fetch(`${API_URL}/api/auth/claim-chips`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -142,6 +143,9 @@ export const Lobby: React.FC<LobbyProps> = ({
         </div>
       </div>
 
+      <footer className="w-full text-center py-4 mt-8 text-[11px] text-gold/40 tracking-wider font-medium select-none z-10">
+        Made by İrem TUNÇ and İncilay KURTULUŞ, 2026
+      </footer>
     </div>
   );
 };

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import mongoose, { Schema } from 'mongoose';
+import crypto from 'crypto';
 
 export interface IUser {
   id: string;
@@ -9,71 +9,80 @@ export interface IUser {
   createdAt: Date;
 }
 
-const DB_FILE = path.resolve(__dirname, '../../db.json');
-
-function readUsers(): IUser[] {
-  try {
-    if (!fs.existsSync(DB_FILE)) {
-      fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2));
-      return [];
-    }
-    const data = fs.readFileSync(DB_FILE, 'utf-8');
-    const users = JSON.parse(data || '[]');
-    return users.map((u: any) => ({
-      ...u,
-      createdAt: new Date(u.createdAt)
-    }));
-  } catch (error) {
-    console.error('Local DB read error, using empty array:', error);
-    return [];
-  }
+// Database representation interface
+interface IUserRaw {
+  _id: string;
+  username: string;
+  passwordHash: string;
+  chips: number;
+  createdAt: Date;
 }
 
-function writeUsers(users: IUser[]) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2));
-  } catch (error) {
-    console.error('Local DB write error:', error);
-  }
-}
+const UserSchema = new Schema<IUserRaw>({
+  _id: { type: String, default: () => crypto.randomUUID() },
+  username: { type: String, required: true, unique: true, index: true },
+  passwordHash: { type: String, required: true },
+  chips: { type: Number, default: 1000 },
+  createdAt: { type: Date, default: Date.now }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+  id: true // Ensure 'id' virtual mapping to '_id' is generated
+});
+
+const UserModel = mongoose.model<IUserRaw>('User', UserSchema);
 
 export const UserDb = {
   findOne: async (query: { username?: string; id?: string }): Promise<IUser | null> => {
-    const users = readUsers();
-    if (query.username) {
-      return users.find(u => u.username.toLowerCase() === query.username!.toLowerCase()) || null;
+    try {
+      if (query.username) {
+        const user = await UserModel.findOne({
+          username: { $regex: new RegExp(`^${query.username}$`, 'i') }
+        });
+        return user ? (user.toJSON() as unknown as IUser) : null;
+      }
+      if (query.id) {
+        const user = await UserModel.findById(query.id);
+        return user ? (user.toJSON() as unknown as IUser) : null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error in UserDb.findOne:', error);
+      return null;
     }
-    if (query.id) {
-      return users.find(u => u.id === query.id) || null;
-    }
-    return null;
   },
 
   findById: async (id: string): Promise<IUser | null> => {
-    const users = readUsers();
-    return users.find(u => u.id === id) || null;
+    try {
+      const user = await UserModel.findById(id);
+      return user ? (user.toJSON() as unknown as IUser) : null;
+    } catch (error) {
+      console.error('Error in UserDb.findById:', error);
+      return null;
+    }
   },
 
   create: async (username: string, passwordHash: string): Promise<IUser> => {
-    const users = readUsers();
-    const newUser: IUser = {
-      id: Math.random().toString(36).substring(2, 9),
+    const newUser = new UserModel({
       username,
       passwordHash,
       chips: 1000,
-      createdAt: new Date(),
-    };
-    users.push(newUser);
-    writeUsers(users);
-    return newUser;
+    });
+    await newUser.save();
+    return newUser.toJSON() as unknown as IUser;
   },
 
   updateChips: async (id: string, chips: number): Promise<IUser | null> => {
-    const users = readUsers();
-    const userIndex = users.findIndex(u => u.id === id);
-    if (userIndex === -1) return null;
-    users[userIndex].chips = chips;
-    writeUsers(users);
-    return users[userIndex];
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        id,
+        { chips },
+        { new: true }
+      );
+      return user ? (user.toJSON() as unknown as IUser) : null;
+    } catch (error) {
+      console.error('Error in UserDb.updateChips:', error);
+      return null;
+    }
   }
 };

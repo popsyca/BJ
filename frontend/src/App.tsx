@@ -10,9 +10,10 @@ interface UserState {
   chips: number;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function App() {
   const [user, setUser] = useState<UserState | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [currentTableId, setCurrentTableId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,21 +24,19 @@ export default function App() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Fetch current user details
-  const fetchUser = async (authToken: string) => {
+  // Fetch current user details using cookie credentials
+  const fetchUser = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: 'include',
       });
 
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
         
-        // Initialize Socket
-        const socket = connectSocket(authToken);
+        // Initialize Socket (it will use withCredentials under the hood)
+        const socket = connectSocket();
 
         // Listen for balance updates from the backend
         socket.on('balance_update', ({ chips }: { chips: number }) => {
@@ -45,32 +44,36 @@ export default function App() {
         });
 
       } else {
-        // Token invalid/expired
-        handleLogout();
+        // Token invalid/expired or no cookie session
+        setUser(null);
+        disconnectSocket();
       }
     } catch (error) {
       console.error('Error fetching user:', error);
-      handleLogout();
+      setUser(null);
+      disconnectSocket();
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (token) {
-      fetchUser(token);
-    } else {
-      setLoading(false);
-    }
+    fetchUser();
 
     return () => {
       disconnectSocket();
     };
-  }, [token]);
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
     setUser(null);
     setCurrentTableId(null);
     disconnectSocket();
@@ -90,11 +93,12 @@ export default function App() {
     const endpoint = isLogin ? 'login' : 'register';
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/${endpoint}`, {
+      const response = await fetch(`${API_URL}/api/auth/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           username: usernameInput.trim(),
           password: passwordInput,
@@ -104,10 +108,9 @@ export default function App() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
         setUsernameInput('');
         setPasswordInput('');
+        await fetchUser();
       } else {
         setAuthError(data.message || 'Giriş işlemi başarısız oldu.');
       }
@@ -233,6 +236,10 @@ export default function App() {
           </div>
 
         </div>
+
+        <footer className="w-full text-center py-4 mt-6 text-[11px] text-gold/40 tracking-wider font-medium select-none z-10">
+          Made by İrem TUNÇ and İncilay KURTULUŞ, 2026
+        </footer>
       </div>
     );
   }
@@ -254,7 +261,7 @@ export default function App() {
       user={user}
       onJoinTable={(tableId) => setCurrentTableId(tableId)}
       onLogout={handleLogout}
-      onRefreshUser={() => token && fetchUser(token)}
+      onRefreshUser={() => fetchUser()}
     />
   );
 }
