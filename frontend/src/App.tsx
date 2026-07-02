@@ -11,6 +11,7 @@ interface UserState {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const authChannel = new BroadcastChannel('auth_channel');
 
 export default function App() {
   const [user, setUser] = useState<UserState | null>(null);
@@ -26,18 +27,25 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(false);
 
   // Fetch current user details using cookie credentials
-  const fetchUser = async () => {
+  const fetchUser = async (customToken?: string) => {
     try {
+      const activeToken = customToken || localStorage.getItem('token');
+      const headers: Record<string, string> = {};
+      if (activeToken) {
+        headers['Authorization'] = `Bearer ${activeToken}`;
+      }
+
       const response = await fetch(`${API_URL}/api/auth/me`, {
         credentials: 'include',
+        headers,
       });
 
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
         
-        // Initialize Socket (it will use withCredentials under the hood)
-        const socket = connectSocket();
+        // Initialize Socket (it will use withCredentials and auth.token under the hood)
+        const socket = connectSocket(activeToken || undefined);
 
         // Listen for balance updates from the backend
         socket.on('balance_update', ({ chips }: { chips: number }) => {
@@ -47,37 +55,79 @@ export default function App() {
       } else {
         // Token invalid/expired or no cookie session
         setUser(null);
+        localStorage.removeItem('token');
         disconnectSocket();
       }
     } catch (error) {
       console.error('Error fetching user:', error);
       setUser(null);
+      localStorage.removeItem('token');
       disconnectSocket();
     } finally {
       setLoading(false);
     }
   };
 
+  const handleJoinTable = (tableId: string | null) => {
+    setCurrentTableId(tableId);
+    authChannel.postMessage({ type: 'TABLE_CHANGE', tableId });
+  };
+
   useEffect(() => {
     fetchUser();
 
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'LOGIN') {
+        if (event.data.token) {
+          localStorage.setItem('token', event.data.token);
+        }
+        setUser(event.data.user);
+        connectSocket(event.data.token);
+      } else if (event.data.type === 'LOGOUT') {
+        localStorage.removeItem('token');
+        setUser(null);
+        setCurrentTableId(null);
+        disconnectSocket();
+      } else if (event.data.type === 'TABLE_CHANGE') {
+        setCurrentTableId(event.data.tableId);
+      } else if (event.data.type === 'CHIPS_UPDATE') {
+        setUser((prev) => prev ? { ...prev, chips: event.data.chips } : null);
+      }
+    };
+    authChannel.addEventListener('message', handleMessage);
+
     return () => {
       disconnectSocket();
+      authChannel.removeEventListener('message', handleMessage);
     };
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      authChannel.postMessage({ type: 'CHIPS_UPDATE', chips: user.chips });
+    }
+  }, [user?.chips]);
+
   const handleLogout = async () => {
     try {
+      const activeToken = localStorage.getItem('token');
+      const headers: Record<string, string> = {};
+      if (activeToken) {
+        headers['Authorization'] = `Bearer ${activeToken}`;
+      }
       await fetch(`${API_URL}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
+        headers,
       });
     } catch (error) {
       console.error('Error during logout:', error);
     }
+    localStorage.removeItem('token');
     setUser(null);
     setCurrentTableId(null);
     disconnectSocket();
+    authChannel.postMessage({ type: 'LOGOUT' });
   };
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -109,16 +159,21 @@ export default function App() {
       const data = await response.json();
 
       if (response.ok) {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         setUsernameInput('');
         setPasswordInput('');
         if (!isLogin) {
           setAuthSuccessMessage('Başarıyla kaydoldunuz! Lobiye yönlendiriliyorsunuz...');
+          authChannel.postMessage({ type: 'LOGIN', token: data.token, user: data.user });
           setTimeout(async () => {
             setAuthSuccessMessage(null);
-            await fetchUser();
+            await fetchUser(data.token);
           }, 2000);
         } else {
-          await fetchUser();
+          authChannel.postMessage({ type: 'LOGIN', token: data.token, user: data.user });
+          await fetchUser(data.token);
         }
       } else {
         setAuthError(data.message || 'Giriş işlemi başarısız oldu.');
@@ -280,7 +335,7 @@ export default function App() {
       <GameTable
         socket={getSocket()}
         tableId={currentTableId}
-        onBackToLobby={() => setCurrentTableId(null)}
+        onBackToLobby={() => handleJoinTable(null)}
       />
     );
   }
@@ -289,7 +344,7 @@ export default function App() {
   return (
     <Lobby
       user={user}
-      onJoinTable={(tableId) => setCurrentTableId(tableId)}
+      onJoinTable={handleJoinTable}
       onLogout={handleLogout}
       onRefreshUser={() => fetchUser()}
     />

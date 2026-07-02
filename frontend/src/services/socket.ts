@@ -8,8 +8,10 @@ export function connectSocket(token?: string): Socket {
     socket.disconnect();
   }
 
+  const activeToken = token || localStorage.getItem('token') || undefined;
+
   socket = io(BACKEND_URL, {
-    auth: token ? { token } : undefined,
+    auth: activeToken ? { token: activeToken } : undefined,
     withCredentials: true,
     transports: ['websocket', 'polling'],
   });
