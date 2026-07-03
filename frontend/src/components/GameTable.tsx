@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { Card } from './Card';
-import { ArrowLeft, Volume2, VolumeX, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeX, ShieldAlert, HelpCircle, X } from 'lucide-react';
 import type { Card as CardType, TableGameState } from '../../../backend/src/game/blackjack';
 
 interface GameTableProps {
@@ -165,6 +165,7 @@ export const GameTable: React.FC<GameTableProps> = ({
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [betSelection, setBetSelection] = useState<number>(10);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   audio.enabled = soundEnabled;
 
@@ -366,7 +367,15 @@ export const GameTable: React.FC<GameTableProps> = ({
           <p className="text-[8px] sm:text-xs text-gold/60 font-medium">Krupiye: {table.minBet}-{table.maxBet}$</p>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => setShowHowToPlay(true)}
+            className="p-2.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold rounded-xl transition cursor-pointer flex items-center justify-center"
+            title="Nasıl Oynanır?"
+          >
+            <HelpCircle className="w-4 h-4 text-gold" />
+          </button>
+
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
             className="p-2.5 bg-forest/60 border border-gold/20 hover:bg-forest text-gold rounded-xl transition cursor-pointer"
@@ -681,6 +690,76 @@ export const GameTable: React.FC<GameTableProps> = ({
       <footer className="w-full text-center py-4 mt-6 text-[11px] text-gold/40 tracking-wider font-medium select-none z-10">
         Made by İrem TUNÇ and İncilay KURTULUŞ, 2026
       </footer>
+
+      {showHowToPlay && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in select-none">
+          <div className="w-full max-w-lg bg-gradient-to-b from-forest/90 to-spruce border border-gold/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowHowToPlay(false)}
+              className="absolute top-4 right-4 text-gold/60 hover:text-gold cursor-pointer transition p-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Title */}
+            <div className="flex items-center gap-3 border-b border-gold/20 pb-4 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-gold/20 border border-gold/30 flex items-center justify-center">
+                <HelpCircle className="w-5 h-5 text-gold" />
+              </div>
+              <h3 className="text-xl font-bold text-platinum tracking-wide">Blackjack Nasıl Oynanır?</h3>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-5 text-gold/80 text-xs sm:text-sm leading-relaxed max-h-[55vh] overflow-y-auto pr-2">
+              <div>
+                <h4 className="font-bold text-gold uppercase tracking-wider mb-1 text-[11px] sm:text-xs">🎯 Oyunun Amacı</h4>
+                <p>Krupiyenin (kasanın) elini geçerek, toplam kart değerinde **21** sayısına en yakın skora ulaşmaktır. Eğer kartlarınızın toplamı 21'i geçerse (Bust), elinizi otomatik olarak kaybedersiniz.</p>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-gold uppercase tracking-wider mb-1 text-[11px] sm:text-xs">🃏 Kart Değerleri</h4>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li><strong>As (A)</strong>: Elinizin durumuna göre <strong>1</strong> veya <strong>11</strong> değerini alır.</li>
+                  <li><strong>Vale, Kız, Papaz (J, Q, K)</strong>: Her biri <strong>10</strong> değerindedir.</li>
+                  <li><strong>Sayı Kartları (2-10)</strong>: Üzerindeki sayı kadar değer taşır.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-gold uppercase tracking-wider mb-1 text-[11px] sm:text-xs">⚔️ Oyun Hamleleri</h4>
+                <ul className="list-disc pl-4 space-y-1.5">
+                  <li><strong>Hit (Kart Çek)</strong>: Elinizi güçlendirmek için 1 adet kart daha çekersiniz.</li>
+                  <li><strong>Stand (Kal)</strong>: Kart çekmeyi durdurur ve mevcut elinizle kasanın oyununu beklersiniz.</li>
+                  <li><strong>Double Down (İkiye Katla)</strong>: Bahsinizi ikiye katlar, tek bir kart çeker ve ardından otomatik olarak kalırsınız.</li>
+                  <li><strong>Split (Böl)</strong>: Elinize gelen ilk iki kart eşit değerdeyse, bahsi ikiye katlayarak kartları iki ayrı ele bölüp oynayabilirsiniz.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-gold uppercase tracking-wider mb-1 text-[11px] sm:text-xs">💰 Ödemeler ve Kazançlar</h4>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li><strong>Normal Kazanma</strong>: Bahsinizin 1 katını alırsınız (1:1).</li>
+                  <li><strong>Blackjack (As + 10 değerli kart)</strong>: Bahsinizin 1.5 katını kazanınsınız (3:2).</li>
+                  <li><strong>Beraberlik (Push)</strong>: Kasa ile skorunuz eşitse bahsinizi geri alırsınız.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer action */}
+            <div className="border-t border-gold/25 pt-6 mt-6 flex justify-end">
+              <button
+                onClick={() => setShowHowToPlay(false)}
+                className="bg-gradient-to-r from-gold-dark via-gold to-gold-light hover:opacity-90 text-spruce font-black py-3 px-8 rounded-xl shadow-lg cursor-pointer text-xs uppercase tracking-wider transition duration-200"
+              >
+                Anladım, Oyuna Dön!
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };
